@@ -1,3 +1,4 @@
+from __future__ import division
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -39,7 +40,7 @@ def main():
     y0 = [v_rest, m_0, h_0, n_0] # Initial conditions vector
     t = np.arange(0, t_max, dt)
 
-    y = odeint(f, y0, t, args=(c_m, gmax_Na, gmax_K, v_Na, v_K, pulse_width, pulse_amp))
+    y = odeint(f, y0, t, args=(c_m, maxcond_Na, maxcond_K, v_Na, v_K, pulse_width, pulse_amp))
     print(y)
     plt.plot(t, y[:,0])
     plt.xlabel('t')
@@ -80,34 +81,33 @@ def alpha_m(v):
     v = v_to_mv(v)
     v = (v + 0.00001) if v == -35 else v # Approximates v to prevent singularity
     a_m = -0.1 * (v + 35) / (math.exp(-0.1 * (v + 35)) - 1)
-    return a_m
+    return 1E3 * a_m
 
 def alpha_h(v):
     v = v_to_mv(v)
     a_h = 0.07 * math.exp(-0.05 * (v + 60))
-    return a_h
+    return 1E3 * a_h
 
 def alpha_n(v):
     v = v_to_mv(v)
     v = (v + 0.00001) if v == -50 else v # Approximates v to prevent singularity
     a_n = -0.01 * (v + 50) / (math.exp(-0.1 * (v + 50)) - 1)
-    return a_n
+    return 1E3 * a_n
 
 def beta_m(v):
     v = v_to_mv(v)
     b_m = 4.0 * math.exp(-(v + 60) / 18)
-    #print(b_m)
-    return b_m
+    return 1E3 * b_m
 
 def beta_h(v):
     v = v_to_mv(v)
     b_h = 1 / (1 + math.exp(-0.1 * (v + 30)))
-    return b_h
+    return 1E3 * b_h
 
 def beta_n(v):
     v = v_to_mv(v)
     b_n = 0.125 * math.exp(-0.0125 * (v + 60))
-    return b_n
+    return 1E3 * b_n
 
 def v_to_mv(v):
     return v * 1.0E3
